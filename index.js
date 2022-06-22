@@ -289,22 +289,6 @@ var reset = function () {
     car.y = 32 + (Math.random() * (canvas.height - 97)); //(32 + 32 + height)
 };
 
-
-/*
-// let x = 1;
-// The main game loop
-var main = function () {
-    render();
-    // Request to do this again ASAP using the Canvas method,
-// it’s much like the JS timer function “setInterval, it will
-// call the main method over and over again so our players 
-// can move and be re-drawn
-// console.log(x);
-// x++;
-    requestAnimationFrame(main); 
-};
-*/
-
 // The main game loop
 var main = function () {
     var now = Date.now();
