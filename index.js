@@ -38,33 +38,33 @@ bottomBushImage.onload = function () {
 bottomBushImage.src = "images/bottomBush.jpg";
 
 // Hero image
-var heroReady = false;
-var heroImage = new Image();
-heroImage.onload = function () {
-    heroReady = true;
+var studentReady = false;
+var studentImage = new Image();
+studentImage.onload = function () {
+    studentReady = true;
 };
-heroImage.src = "images/hero.png";
+studentImage.src = "images/hero.png";
 
 // Monster image
-var monsterReady = false;
-var monsterImage = new Image();
-monsterImage.onload = function () {
-    monsterReady = true;
+var busReady = false;
+var busImage = new Image();
+busImage.onload = function () {
+    busReady = true;
 };
-monsterImage.src = "images/monster.png";
+busImage.src = "images/monster.png";
 
 // Game objects
-var hero = {
+var student = {
     speed: 256, // movement in pixels per second
     x: 0,  // where on the canvas are they?
     y: 0  // where on the canvas are they?
 };
-var monster = {
+var bus = {
 // for this version, the monster does not move, so just and x and y
     x: 0,
     y: 0
 };
-var monstersCaught = 0;
+var busses = 0;
 
 // Handle keyboard controls
 var keysDown = {}; //object were we properties when keys go down
@@ -106,32 +106,42 @@ let update = function (modifier) {
 
 
     //move if key down but not if about to move into bushed
-    if (38 in keysDown && hero.y > 32+2) { //  holding up key
-        hero.y -= hero.speed * modifier;
+    if (38 in keysDown && student.y > 32+2) { //  holding up key
+        student.y -= student.speed * modifier;
     }
-    if (40 in keysDown && hero.y < canvas.height - (81 + 2)) { //  holding down key (char height + 32 + 2)
-        hero.y += hero.speed * modifier;
+    if (40 in keysDown && student.y < canvas.height - (81 + 2)) { //  holding down key (char height + 32 + 2)
+        student.y += student.speed * modifier;
     }
-    if (37 in keysDown && hero.x > (32+2)) { // holding left key
-        hero.x -= hero.speed * modifier;
+    if (37 in keysDown && student.x > (32+2)) { // holding left key
+        student.x -= student.speed * modifier;
     }
-    if (39 in keysDown && hero.x < canvas.width - (67 + 2)) { // holding right key (char width + 32 + 2)
-        hero.x += hero.speed * modifier;
+    if (39 in keysDown && student.x < canvas.width - (67 + 2)) { // holding right key (char width + 32 + 2)
+        student.x += student.speed * modifier;
     }
     
 
     // Are they touching?
     if (
-        hero.x <= (monster.x + 70)
-        && monster.x <= (hero.x + 30)
-        && hero.y <= (monster.y + 20)
-        && monster.y <= (hero.y + 45) // char height + 32
+        student.x <= (bus.x + 70)
+        && bus.x <= (student.x + 30)
+        && student.y <= (bus.y + 20)
+        && bus.y <= (student.y + 45) // char height + 32
     ) {
-        ++monstersCaught;       // keep track of our “score”
-        console.log(monstersCaught);
+        ++busCount;       // keep track of our “score”
+        console.log(busses);
         reset();       // start a new cycle
     }
 
+    if (
+        student.x <= (homework.x + 70)
+        && homework.x <= (student.x + 30)
+        && student.y <= (homework.y + 20)
+        && homework.y <= (student.y + 45) // char height + 32
+    ) {
+        ++homeworkCount;       // keep track of our “score”
+        console.log(busses);
+        reset();       // start a new cycle
+    }
 };
 
 
@@ -158,12 +168,12 @@ let render = function () {
         ctx.drawImage(topBushImage, 0, 965);
     }
 
-    if (heroReady) {
-        ctx.drawImage(heroImage, hero.x, hero.y);
+    if (studentReady) {
+        ctx.drawImage(studentImage, student.x, student.y);
     }
 
-    if (monsterReady) {
-        ctx.drawImage(monsterImage, monster.x, monster.y);
+    if (busReady) {
+        ctx.drawImage(busImage, bus.x, bus.y);
     }
 
         // Score
@@ -172,20 +182,20 @@ let render = function () {
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
         // ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
-        ctx.fillText("Busses caught: " + monstersCaught, 0, 0);
+        ctx.fillText("Bus Counter: " + busCount, 0, 0);
 
 };
 
 // Reset the game when the player catches a monster
 var reset = function () {
-    hero.x = canvas.width / 2;
-    hero.y = canvas.height / 2;
+    student.x = canvas.width / 2;
+    student.y = canvas.height / 2;
 
 //Place the monster somewhere on the screen randomly
 // but not in the hedges, Article in wrong, the 64 needs to be 
 // hedge 32 + hedge 32 + char 32 = 96
-    monster.x = 32 + (Math.random() * (canvas.width - 149)); //(32 + 32 + width)
-    monster.y = 32 + (Math.random() * (canvas.height - 149)); //(32 + 32 + height)
+    bus.x = 32 + (Math.random() * (canvas.width - 149)); //(32 + 32 + width)
+    bus.y = 32 + (Math.random() * (canvas.height - 149)); //(32 + 32 + height)
 };
 
 
@@ -212,7 +222,7 @@ var main = function () {
     render();
     then = now;
 
-    if (monstersCaught < 3){
+    if (busses < 3){
         requestAnimationFrame(main);
     }
     //  Request to do this again ASAP
