@@ -172,7 +172,7 @@ let render = function () {
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
         // ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
-        ctx.fillText("Goblins caught: " + monstersCaught, 0, 0);
+        ctx.fillText("Busses caught: " + monstersCaught, 0, 0);
 
 };
 
@@ -211,8 +211,12 @@ var main = function () {
     update(delta / 1000);
     render();
     then = now;
+
+    if (monstersCaught < 3){
+        requestAnimationFrame(main);
+    }
     //  Request to do this again ASAP
-    requestAnimationFrame(main);
+
 };
 
 
