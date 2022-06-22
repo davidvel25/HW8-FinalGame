@@ -86,9 +86,6 @@ var homeworkCounter = 0;
 var busCounter = 0;
 var totalPoints = 0;
 totalPoints = homeworkCounter + busCounter;
-if (homeworkCounter++ || busCounter++){
-    totalPoints++;
-}
 var student = {
     speed: 256, // movement in pixels per second
     x: 0,  // where on the canvas are they?
