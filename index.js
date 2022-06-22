@@ -1,3 +1,5 @@
+alert("Instructions: \n Catch the bus or finish your homework for +1 points. \n Crash into a car or hit a stop sign, start again.");
+
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
@@ -37,23 +39,56 @@ bottomBushImage.onload = function () {
 };
 bottomBushImage.src = "images/bottomBush.jpg";
 
-// Hero image
+// Student image
 var studentReady = false;
 var studentImage = new Image();
 studentImage.onload = function () {
     studentReady = true;
 };
-studentImage.src = "images/hero.png";
+studentImage.src = "images/student.png";
 
-// Monster image
+// Bus image
 var busReady = false;
 var busImage = new Image();
 busImage.onload = function () {
     busReady = true;
 };
-busImage.src = "images/monster.png";
+busImage.src = "images/bus.png";
+
+//Homework Image
+var homeworkReady = false;
+var homeworkImage = new Image();
+homeworkImage.onload = function(){
+    homeworkReady = true;
+}
+homeworkImage.src = "images/homework.png";
+
+//Car Image
+var carReady = false;
+var carImage = new Image();
+carImage.onload = function(){
+    carReady = true;
+}
+carImage.src = "images/car.png";
+
+//Stop Image
+var stopSignReady = false;
+var stopSignImage = new Image();
+stopSignImage.onload = function(){
+    stopSignReady = true;
+}
+stopSignImage.src = "images/stopSign.png";
+
+
 
 // Game objects
+var homeworkCounter = 0;
+var busCounter = 0;
+var totalPoints = 0;
+totalPoints = homeworkCounter + busCounter;
+if (homeworkCounter++ || busCounter++){
+    totalPoints++;
+}
 var student = {
     speed: 256, // movement in pixels per second
     x: 0,  // where on the canvas are they?
@@ -64,8 +99,18 @@ var bus = {
     x: 0,
     y: 0
 };
-var busses = 0;
-
+var homework = {
+        x: 0,
+        y: 0
+    };
+var car = {
+        x: 0,
+        y: 0
+};
+var stopSign = {
+    x: 0,
+    y: 0
+};
 // Handle keyboard controls
 var keysDown = {}; //object were we properties when keys go down
                 // and then delete them when the key goes up
@@ -91,20 +136,6 @@ addEventListener("keyup", function (e) {
 
 // Update game objects
 let update = function (modifier) {
-    // if (38 in keysDown) { // Player holding up
-    //     hero.y -= hero.speed * modifier;
-    // }
-    // if (40 in keysDown) { // Player holding down
-    //     hero.y += hero.speed * modifier;
-    // }
-    // if (37 in keysDown) { // Player holding left
-    //     hero.x -= hero.speed * modifier;
-    // }
-    // if (39 in keysDown) { // Player holding right
-    //     hero.x += hero.speed * modifier;
-    // }
-
-
     //move if key down but not if about to move into bushed
     if (38 in keysDown && student.y > 32+2) { //  holding up key
         student.y -= student.speed * modifier;
@@ -127,8 +158,9 @@ let update = function (modifier) {
         && student.y <= (bus.y + 20)
         && bus.y <= (student.y + 45) // char height + 32
     ) {
-        ++busCount;       // keep track of our “score”
-        console.log(busses);
+        ++busCounter;       // keep track of our “score”
+        ++totalPoints;
+        console.log(busCounter);
         reset();       // start a new cycle
     }
 
@@ -138,14 +170,53 @@ let update = function (modifier) {
         && student.y <= (homework.y + 20)
         && homework.y <= (student.y + 45) // char height + 32
     ) {
-        ++homeworkCount;       // keep track of our “score”
-        console.log(busses);
+        ++homeworkCounter;       // keep track of our “score”
+        ++totalPoints;
+        console.log(homeworkCounter);
         reset();       // start a new cycle
+    }
+
+    if (
+        student.x <= (stopSign.x + 70)
+        && stopSign.x <= (student.x + 30)
+        && student.y <= (stopSign.y + 20)
+        && stopSign.y <= (student.y + 45) // char height + 32
+    ) {
+        userLost();
+    }
+
+    if (
+        student.x <= (car.x + 70)
+        && car.x <= (student.x + 30)
+        && student.y <= (car.y + 20)
+        && car.y <= (student.y + 45) // char height + 32
+    ) {
+        userLost();
+    }
+
+    if ((totalPoints) === 10){
+        userWins();
     }
 };
 
 
+let userLost  = function(){
+    alert("Avoid obstacles like cars and stop signs to avoid losing. Try again!");
+    reset();
+    busCounter = 0;
+    homeworkCounter = 0;
+    totalPoints = 0;
+}
 
+let userWins = function(){
+    if ((totalPoints) === 10){
+        alert("Nice Job! You win :)");
+        reset();
+        busCounter = 0;
+        homeworkCounter = 0;
+        totalPoints = 0;
+    }
+}
 
 
 
@@ -176,13 +247,27 @@ let render = function () {
         ctx.drawImage(busImage, bus.x, bus.y);
     }
 
+    if (homeworkReady){
+        ctx.drawImage(homeworkImage, homework.x, homework.y);
+    }
+
+    if (stopSignReady){
+        ctx.drawImage(stopSignImage, stopSign.x, stopSign.y);
+    }
+
+    if (carReady){
+        ctx.drawImage(carImage, car.x, car.y);
+    }
+
         // Score
         ctx.fillStyle = "rgb(250, 250, 250)";
         ctx.font = "24px Helvetica";
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
         // ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
-        ctx.fillText("Bus Counter: " + busCount, 0, 0);
+        ctx.fillText("Bus Counter: " + busCounter, 0, 0);
+        ctx.fillText("Homework Counter: " + homeworkCounter, 750, 0);
+        ctx.fillText("Total Points: " + totalPoints, 415, 0);
 
 };
 
@@ -195,7 +280,16 @@ var reset = function () {
 // but not in the hedges, Article in wrong, the 64 needs to be 
 // hedge 32 + hedge 32 + char 32 = 96
     bus.x = 32 + (Math.random() * (canvas.width - 149)); //(32 + 32 + width)
-    bus.y = 32 + (Math.random() * (canvas.height - 149)); //(32 + 32 + height)
+    bus.y = 32 + (Math.random() * (canvas.height - 93)); //(32 + 32 + height)
+
+    homework.x = 32 + (Math.random() * (canvas.width - 134)); //(32 + 32 + width)
+    homework.y = 32 + (Math.random() * (canvas.height - 134)); //(32 + 32 + height)
+
+    stopSign.x = 32 + (Math.random() * (canvas.width - 149)); //(32 + 32 + width)
+    stopSign.y = 32 + (Math.random() * (canvas.height - 149)); //(32 + 32 + height)
+    
+    car.x = 32 + (Math.random() * (canvas.width - 149)); //(32 + 32 + width)
+    car.y = 32 + (Math.random() * (canvas.height - 97)); //(32 + 32 + height)
 };
 
 
@@ -222,7 +316,7 @@ var main = function () {
     render();
     then = now;
 
-    if (busses < 3){
+    if (busCounter < 10){
         requestAnimationFrame(main);
     }
     //  Request to do this again ASAP
